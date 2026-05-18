@@ -1,0 +1,7 @@
+youtube-transcript-api
+langchain
+langchain-community
+langchain-groq
+faiss-cpu
+python-dotenv
+google-genai
