@@ -1,8 +1,3 @@
-from youtube_transcript_api import (
-    YouTubeTranscriptApi,
-    TranscriptsDisabled
-)
-
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
@@ -13,6 +8,7 @@ from langchain_groq import ChatGroq
 from google import genai
 from dotenv import load_dotenv
 
+import requests
 import os
 
 load_dotenv()
@@ -35,7 +31,7 @@ class GeminiEmbeddings(Embeddings):
 
         response = client.models.embed_content(
             model="gemini-embedding-001",
-            contents=texts,  # list of chunks
+            contents=texts,
             config={
                 "output_dimensionality": 768
             }
@@ -116,33 +112,13 @@ chain = prompt | llm | parser
 
 def load_video(video_id):
 
-    try:
-
-        transcript_list = YouTubeTranscriptApi().fetch(
-            video_id,
-            languages=["en", "hi"]
-        )
-
-        transcript = " ".join(
-            chunk.text
-            for chunk in transcript_list
-        )
-
-    except TranscriptsDisabled:
-        raise Exception("Transcript not available")
-
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200
-    )
-
-    chunks = splitter.create_documents(
-        [transcript]
-    )
-
     os.makedirs("FAISS", exist_ok=True)
 
     faiss_path = f"FAISS/{video_id}"
+
+    # -------------------------
+    # Load Existing FAISS
+    # -------------------------
 
     if os.path.exists(faiss_path):
 
@@ -155,6 +131,52 @@ def load_video(video_id):
         )
 
     else:
+
+        print("FAISS not found. Fetching transcript...")
+
+        try:
+
+            response = requests.get(
+                f"https://api.supadata.ai/v1/youtube/transcript?videoId={video_id}",
+                headers={
+                    "x-api-key": os.getenv("SUPADATA_API_KEY")
+                },
+                timeout=30
+            )
+
+            if response.status_code != 200:
+
+                raise Exception(
+                    f"Supadata Error: {response.text}"
+                )
+
+            data = response.json()
+
+            transcript = " ".join(
+                chunk["text"]
+                for chunk in data["content"]
+            )
+
+            if not transcript.strip():
+
+                raise Exception(
+                    "Transcript not available"
+                )
+
+        except Exception as e:
+
+            raise Exception(
+                f"Failed to fetch transcript: {str(e)}"
+            )
+
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200
+        )
+
+        chunks = splitter.create_documents(
+            [transcript]
+        )
 
         print("Creating new FAISS...")
 
@@ -170,9 +192,9 @@ def load_video(video_id):
     retriever = vector_store.as_retriever(
         search_type="mmr",
         search_kwargs={
-        "k": 8,
-        "fetch_k": 20
-        }   
+            "k": 8,
+            "fetch_k": 20
+        }
     )
 
     return retriever
@@ -198,3 +220,4 @@ def ask_question(retriever, question):
     )
 
     return answer
+
