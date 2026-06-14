@@ -1,74 +1,246 @@
-body{
-    font-family: Arial, sans-serif;
-    background:#f4f4f4;
+/* Reset */
+
+*{
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
-.container{
-    width:80%;
-    max-width:900px;
-    margin:40px auto;
+/* Body */
+
+body{
+    font-family: Inter, "Segoe UI", Roboto, sans-serif;
+    background:#212121;
+    color:#ececec;
+    height:100vh;
+    overflow:hidden;
 }
+
+/* Main Container */
+
+.container{
+    width:min(1000px,95%);
+    height:100vh;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+    padding:20px 0;
+}
+
+/* Heading */
 
 h1{
     text-align:center;
+    font-size:24px;
+    font-weight:600;
+    color:#ffffff;
+    margin-bottom:20px;
 }
+
+/* YouTube URL Section */
 
 .video-section{
     display:flex;
     gap:10px;
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
 
 .video-section input{
     flex:1;
-    padding:10px;
+    background:#2f2f2f;
+    color:#ffffff;
+    border:1px solid #404040;
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:15px;
+    outline:none;
+    transition:0.2s;
+}
+
+.video-section input:focus{
+    border-color:#10a37f;
+}
+
+.video-section input::placeholder{
+    color:#9a9a9a;
 }
 
 .video-section button{
-    padding:10px 20px;
+    background:#10a37f;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:0 24px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:0.2s;
 }
+
+.video-section button:hover{
+    background:#0d8a6b;
+}
+
+/* Chat Container */
 
 .chat-section{
-    background:white;
-    border-radius:10px;
-    padding:20px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    background:#2b2b2b;
+    border:1px solid #3c3c3c;
+    border-radius:18px;
+    overflow:hidden;
 }
+
+/* Chat Messages Area */
 
 #chatBox{
-    height:400px;
+    flex:1;
     overflow-y:auto;
-    border:1px solid #ddd;
-    padding:10px;
-    margin-bottom:15px;
+    padding:25px;
+    scroll-behavior:smooth;
 }
+
+/* Scrollbar */
+
+#chatBox::-webkit-scrollbar{
+    width:8px;
+}
+
+#chatBox::-webkit-scrollbar-track{
+    background:#2b2b2b;
+}
+
+#chatBox::-webkit-scrollbar-thumb{
+    background:#555;
+    border-radius:10px;
+}
+
+#chatBox::-webkit-scrollbar-thumb:hover{
+    background:#777;
+}
+
+/* Message Bubble */
 
 .message{
-    margin:10px 0;
-    padding:10px;
-    border-radius:8px;
+    max-width:80%;
+    padding:14px 18px;
+    margin:12px 0;
+    border-radius:18px;
+    line-height:1.6;
+    font-size:15px;
+    word-wrap:break-word;
+    animation:fadeIn 0.2s ease;
 }
+
+/* User Message */
 
 .user{
-    background:#d6eaff;
-    text-align:right;
+    background:#343541;
+    color:white;
+    margin-left:auto;
+    border-bottom-right-radius:6px;
 }
 
+/* Bot Message */
+
 .bot{
-    background:#ececec;
+    background:#444654;
+    color:white;
+    margin-right:auto;
+    border-bottom-left-radius:6px;
 }
+
+/* Input Section */
 
 .input-area{
     display:flex;
     gap:10px;
+    padding:15px;
+    border-top:1px solid #404040;
+    background:#2b2b2b;
 }
+
+/* Question Input */
 
 .input-area input{
     flex:1;
-    padding:10px;
+    background:#40414f;
+    color:white;
+    border:1px solid transparent;
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:15px;
+    outline:none;
+    transition:0.2s;
 }
 
+.input-area input:focus{
+    border-color:#10a37f;
+}
+
+.input-area input::placeholder{
+    color:#9a9a9a;
+}
+
+/* Send Button */
+
 .input-area button{
-    padding:10px 20px;
+    background:#10a37f;
+    color:white;
+    border:none;
+    border-radius:14px;
+    padding:0 22px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:0.2s;
+}
+
+.input-area button:hover{
+    background:#0d8a6b;
+}
+
+/* Animation */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+    .container{
+        width:100%;
+        padding:10px;
+    }
+
+    h1{
+        font-size:20px;
+    }
+
+    .video-section{
+        flex-direction:column;
+    }
+
+    .video-section button{
+        height:48px;
+    }
+
+    .message{
+        max-width:92%;
+    }
+
+    .input-area{
+        padding:10px;
+    }
 }
